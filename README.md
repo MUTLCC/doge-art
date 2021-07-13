@@ -26,7 +26,7 @@ For more information about getting a setup like the one in the screenshot, see
 
 ## Installation
 
-`pip install doge`
+`pip3 install dogeart`
 
 *Ubuntu or Debian users may have to use `sudo -H`, see issue [#61](https://github.com/thiderman/doge/issues/61).*
 
