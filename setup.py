@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(
-    name="dogeart",
-    version="3.7.1",
-    url="https://github.com/TeleDoge/dogeart",
+    name="doge-art",
+    version="3.7.2",
+    url="https://github.com/MUTLCC/doge-art",
     author="Lowe Thiderman",
     author_email="lowe.thiderman@gmail.com",
     description=("wow very terminal doge"),
