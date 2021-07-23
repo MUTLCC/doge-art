@@ -1,4 +1,4 @@
-doge
+doge-art
 ====
 
 ![wow screenshot](http://i.imgur.com/HxH9qka.png)
@@ -26,7 +26,7 @@ For more information about getting a setup like the one in the screenshot, see
 
 ## Installation
 
-`pip3 install dogeart`
+`pip(3) install doge-art`
 
 *Ubuntu or Debian users may have to use `sudo -H`, see issue [#61](https://github.com/thiderman/doge/issues/61).*
 
