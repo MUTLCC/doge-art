@@ -163,7 +163,7 @@ class Doge(object):
         with open(self.doge_path) as f:
             if sys.version_info < (3, 0):
                 if locale.getpreferredencoding() == "UTF-8":
-                    doge_lines = [l.decode("utf-8") for l in f.xreadlines()]  # noqa
+                    doge_lines = [l.decode("utf-8") for l in f]  # noqa
                 else:
                     # encode to printable characters, leaving a space in place
                     # of untranslatable characters, resulting in a slightly
@@ -172,7 +172,7 @@ class Doge(object):
                         l.decode("utf-8")
                         .encode(locale.getpreferredencoding(), "replace")
                         .replace("?", " ")
-                        for l in f.xreadlines()  # noqa
+                        for l in f  # noqa
                     ]
             else:
                 doge_lines = [l for l in f.readlines()]
@@ -214,7 +214,9 @@ class Doge(object):
         # Python 2 needs to decode the UTF bytes to not crash. See issue #45.
         func = str.lower
         if sys.version_info < (3,):
-            func = lambda x: str.lower(x).decode("utf-8")  # noqa
+
+            def func(x):
+                return str.lower(x).decode("utf-8")  # noqa
 
         self.words.extend(map(func, ret))
 
@@ -234,7 +236,7 @@ class Doge(object):
             return False
 
         if sys.version_info < (3, 0):
-            stdin_lines = (l.decode("utf-8") for l in sys.stdin.xreadlines())  # noqa
+            stdin_lines = (l.decode("utf-8") for l in sys.stdin)  # noqa
         else:
             stdin_lines = (l for l in sys.stdin.readlines())
 
