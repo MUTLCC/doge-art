@@ -2,10 +2,10 @@ from setuptools import setup
 
 setup(
     name="doge-art",
-    version="3.7.2",
+    version="3.7.3",
     url="https://github.com/MUTLCC/doge-art",
-    author="Lowe Thiderman",
-    author_email="lowe.thiderman@gmail.com",
+    author="Mutlu",
+    author_email="",
     description=("wow very terminal doge"),
     license="MIT",
     packages=["doge"],
