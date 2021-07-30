@@ -163,7 +163,7 @@ class Doge(object):
         with open(self.doge_path) as f:
             if sys.version_info < (3, 0):
                 if locale.getpreferredencoding() == "UTF-8":
-                    doge_lines = [l.decode("utf-8") for l in f.xreadlines()]
+                    doge_lines = [l.decode("utf-8") for l in f]
                 else:
                     # encode to printable characters, leaving a space in place
                     # of untranslatable characters, resulting in a slightly
@@ -172,7 +172,7 @@ class Doge(object):
                         l.decode("utf-8")
                         .encode(locale.getpreferredencoding(), "replace")
                         .replace("?", " ")
-                        for l in f.xreadlines()
+                        for l in f
                     ]
             else:
                 doge_lines = [l for l in f.readlines()]
@@ -214,7 +214,9 @@ class Doge(object):
         # Python 2 needs to decode the UTF bytes to not crash. See issue #45.
         func = str.lower
         if sys.version_info < (3,):
-            func = lambda x: str.lower(x).decode("utf-8")
+
+            def func(x):
+                return str.lower(x).decode("utf-8")
 
         self.words.extend(map(func, ret))
 
@@ -234,11 +236,11 @@ class Doge(object):
             return False
 
         if sys.version_info < (3, 0):
-            stdin_lines = (l.decode("utf-8") for l in sys.stdin.xreadlines())
+            stdin_lines = (l.decode("utf-8") for l in sys.stdin)
         else:
             stdin_lines = (l for l in sys.stdin.readlines())
 
-        rx_word = re.compile("\w+", re.UNICODE)
+        rx_word = re.compile("\\w+", re.UNICODE)
 
         # If we have stdin data, we should remove everything else!
         self.words.clear()
@@ -360,7 +362,7 @@ class TTYHandler(object):
             if windll.kernel32.GetConsoleScreenBufferInfo(h, buf):
                 left, top, right, bottom = struct.unpack("4H", buf.raw[10:18])
                 return right - left + 1, bottom - top + 1
-        except:
+        except BaseException:
             pass
 
     def _tty_size_linux(self, fd):
@@ -371,7 +373,7 @@ class TTYHandler(object):
             return struct.unpack(
                 "hh", fcntl.ioctl(fd, termios.TIOCGWINSZ, struct.pack("hh", 0, 0))
             )
-        except:
+        except BaseException:
             return
 
     def get_tty_size(self):

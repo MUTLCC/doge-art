@@ -44,7 +44,7 @@ class DogeDeque(deque):
         self.rotate(1)
         try:
             return self[0]
-        except:
+        except BaseException:
             return "wow"
 
     def extend(self, iterable):
