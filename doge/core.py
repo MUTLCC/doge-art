@@ -64,7 +64,7 @@ class Doge(object):
 
         # Create a list filled with empty lines and Shibe at the bottom.
         fill = range(self.tty.height - len(doge) - line_count)
-        self.lines = ["\n" for x in fill]
+        self.lines = ["\n" for _ in fill]
         self.lines += doge
 
         # Try to fetch data fed thru stdin
@@ -162,21 +162,19 @@ class Doge(object):
 
         with open(self.doge_path) as f:
             if sys.version_info < (3, 0):
-                if locale.getpreferredencoding() == "UTF-8":
-                    doge_lines = [l.decode("utf-8") for l in f]  # noqa
-                else:
-                    # encode to printable characters, leaving a space in place
-                    # of untranslatable characters, resulting in a slightly
-                    # blockier doge on non-UTF8 terminals
-                    doge_lines = [
+                return (
+                    [l.decode("utf-8") for l in f]
+                    if locale.getpreferredencoding() == "UTF-8"
+                    else [
                         l.decode("utf-8")
                         .encode(locale.getpreferredencoding(), "replace")
                         .replace("?", " ")
                         for l in f  # noqa
                     ]
+                )
+
             else:
-                doge_lines = [l for l in f.readlines()]
-            return doge_lines
+                return list(f.readlines())
 
     def get_real_data(self):
         """
@@ -238,7 +236,7 @@ class Doge(object):
         if sys.version_info < (3, 0):
             stdin_lines = (l.decode("utf-8") for l in sys.stdin)  # noqa
         else:
-            stdin_lines = (l for l in sys.stdin.readlines())
+            stdin_lines = iter(sys.stdin.readlines())
 
         rx_word = re.compile("\\w+", re.UNICODE)
 
@@ -421,11 +419,7 @@ def onscreen_len(s):
     if sys.version_info < (3, 0) and isinstance(s, str):
         return len(s)
 
-    length = 0
-    for ch in s:
-        length += 2 if unicodedata.east_asian_width(ch) == "W" else 1
-
-    return length
+    return sum(2 if unicodedata.east_asian_width(ch) == "W" else 1 for ch in s)
 
 
 def setup_arguments():
