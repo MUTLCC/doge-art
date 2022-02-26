@@ -310,11 +310,11 @@ class DogeMessage(object):
             msg = self.word
         else:
             # Add a prefix.
-            msg = u"{0} {1}".format(wow.PREFIXES.get(), self.word)
+            msg = "{0} {1}".format(wow.PREFIXES.get(), self.word)
 
             # Seldomly add a suffix as well.
             if random.choice(range(15)) == 0:
-                msg += u" {0}".format(wow.SUFFIXES.get())
+                msg += " {0}".format(wow.SUFFIXES.get())
 
         # Calculate the maximum possible spacer
         interval = self.tty.width - onscreen_len(msg)
@@ -328,16 +328,16 @@ class DogeMessage(object):
             return self.occupied + "\n"
 
         # Apply spacing
-        msg = u"{0}{1}".format(" " * random.choice(range(interval)), msg)
+        msg = "{0}{1}".format(" " * random.choice(range(interval)), msg)
 
         if self.tty.pretty:
             # Apply pretty ANSI color coding.
-            msg = u"\x1b[1m\x1b[38;5;{0}m{1}\x1b[39m\x1b[0m".format(
+            msg = "\x1b[1m\x1b[38;5;{0}m{1}\x1b[39m\x1b[0m".format(
                 wow.COLORS.get(), msg
             )
 
         # Line ends are pretty cool guys, add one of those.
-        return u"{0}{1}\n".format(self.occupied, msg)
+        return "{0}{1}\n".format(self.occupied, msg)
 
 
 class TTYHandler(object):
