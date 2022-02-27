@@ -71,10 +71,7 @@ class DogeDeque(deque):
 class FrequencyBasedDogeDeque(deque):
     def __init__(self, *args, **kwargs):
         self.index = 0
-        if "step" in kwargs:
-            self.step = kwargs["step"]
-        else:
-            self.step = 2
+        self.step = kwargs["step"] if "step" in kwargs else 2
         args = list(args)
         # sort words by frequency
         args = sorted(set(args), key=lambda x: args.count(x))

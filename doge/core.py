@@ -64,7 +64,7 @@ class Doge(object):
 
         # Create a list filled with empty lines and Shibe at the bottom.
         fill = range(self.tty.height - len(doge) - line_count)
-        self.lines = ["\n" for x in fill]
+        self.lines = ["\n" for _ in fill]
         self.lines += doge
 
         # Try to fetch data fed thru stdin
@@ -162,21 +162,19 @@ class Doge(object):
 
         with open(self.doge_path) as f:
             if sys.version_info < (3, 0):
-                if locale.getpreferredencoding() == "UTF-8":
-                    doge_lines = [l.decode("utf-8") for l in f]  # noqa
-                else:
-                    # encode to printable characters, leaving a space in place
-                    # of untranslatable characters, resulting in a slightly
-                    # blockier doge on non-UTF8 terminals
-                    doge_lines = [
+                return (
+                    [l.decode("utf-8") for l in f]
+                    if locale.getpreferredencoding() == "UTF-8"
+                    else [
                         l.decode("utf-8")
                         .encode(locale.getpreferredencoding(), "replace")
                         .replace("?", " ")
                         for l in f  # noqa
                     ]
+                )
+
             else:
-                doge_lines = [l for l in f.readlines()]
-            return doge_lines
+                return list(f.readlines())
 
     def get_real_data(self):
         """
@@ -238,7 +236,7 @@ class Doge(object):
         if sys.version_info < (3, 0):
             stdin_lines = (l.decode("utf-8") for l in sys.stdin)  # noqa
         else:
-            stdin_lines = (l for l in sys.stdin.readlines())
+            stdin_lines = iter(sys.stdin.readlines())
 
         rx_word = re.compile("\\w+", re.UNICODE)
 
@@ -312,11 +310,11 @@ class DogeMessage(object):
             msg = self.word
         else:
             # Add a prefix.
-            msg = u"{0} {1}".format(wow.PREFIXES.get(), self.word)
+            msg = "{0} {1}".format(wow.PREFIXES.get(), self.word)
 
             # Seldomly add a suffix as well.
             if random.choice(range(15)) == 0:
-                msg += u" {0}".format(wow.SUFFIXES.get())
+                msg += " {0}".format(wow.SUFFIXES.get())
 
         # Calculate the maximum possible spacer
         interval = self.tty.width - onscreen_len(msg)
@@ -330,16 +328,16 @@ class DogeMessage(object):
             return self.occupied + "\n"
 
         # Apply spacing
-        msg = u"{0}{1}".format(" " * random.choice(range(interval)), msg)
+        msg = "{0}{1}".format(" " * random.choice(range(interval)), msg)
 
         if self.tty.pretty:
             # Apply pretty ANSI color coding.
-            msg = u"\x1b[1m\x1b[38;5;{0}m{1}\x1b[39m\x1b[0m".format(
+            msg = "\x1b[1m\x1b[38;5;{0}m{1}\x1b[39m\x1b[0m".format(
                 wow.COLORS.get(), msg
             )
 
         # Line ends are pretty cool guys, add one of those.
-        return u"{0}{1}\n".format(self.occupied, msg)
+        return "{0}{1}\n".format(self.occupied, msg)
 
 
 class TTYHandler(object):
@@ -421,11 +419,7 @@ def onscreen_len(s):
     if sys.version_info < (3, 0) and isinstance(s, str):
         return len(s)
 
-    length = 0
-    for ch in s:
-        length += 2 if unicodedata.east_asian_width(ch) == "W" else 1
-
-    return length
+    return sum(2 if unicodedata.east_asian_width(ch) == "W" else 1 for ch in s)
 
 
 def setup_arguments():
